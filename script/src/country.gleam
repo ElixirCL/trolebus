@@ -15,7 +15,7 @@ pub fn chile() -> Country {
   Country(
     id: "cl",
     name: "Chile",
-    entities: [entity.banco_estado()],
+    entities: [entity.banco_estado(), entity.banco_chile()],
     currencies: [currency.clp()],
     timezones: [
       "America/Santiago",
