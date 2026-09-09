@@ -16,12 +16,12 @@ pub type Label {
 }
 
 pub fn for_query(label: String) -> Label {
-  let prefix = "biyete"
+  let prefix = "trolebus"
   let formatted =
     label
     |> string.replace(each: " ", with: "+")
     |> string.lowercase
   let key = prefix <> "/" <> formatted
-  let query = prefix <> "-" <> formatted
+  let query = prefix <> "/" <> formatted
   Label(raw: label, formatted: formatted, key: key, query: query)
 }

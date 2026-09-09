@@ -18,7 +18,7 @@ pub fn banco_chile() -> Entity {
   Entity(
     id: "cl.bancochile",
     name: "Banco Chile",
-    labels: ["expense:cl.bancochile:payment-notifications"],
+    labels: ["expense:cl-bancochile:payment-notifications"],
   )
 }
 

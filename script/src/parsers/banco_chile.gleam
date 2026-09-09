@@ -26,11 +26,14 @@ pub fn parse(html_body: String) -> ParseResult {
 
   let name = extract_name(html_body)
   let rut = mail_parser.get_value(rows, "Rut")
-  let account_number = mail_parser.get_value(rows, "N° de Cuenta")
   let account_type = mail_parser.get_value(rows, "Cuenta de Cargo")
   let email = mail_parser.get_value(rows, "Mail")
   let date_str = mail_parser.get_value(rows, "Fecha")
   let account = mail_parser.get_value(rows, "Cuenta")
+  let account_number = case mail_parser.get_value(rows, "N° de Cuenta") {
+    "" -> account
+    value -> value
+  }
   let amount_str = mail_parser.get_value(rows, "Monto Pagado")
   let transaction_id = mail_parser.get_value(rows, "ID")
 

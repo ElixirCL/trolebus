@@ -34,7 +34,7 @@ export function get_subject(message) {
 }
 
 export function get_body(message) {
-  return message.getPlainBody()
+  return message.getBody()
 }
 
 export function get_from(message) {

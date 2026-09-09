@@ -1437,7 +1437,7 @@ function banco_estado() {
 	return new Entity("cl.bancoestado", "Banco Estado", List$Empty$const);
 }
 function banco_chile() {
-	return new Entity("cl.bancochile", "Banco Chile", toList(["expense:cl.bancochile:payment-notifications"]));
+	return new Entity("cl.bancochile", "Banco Chile", toList(["expense:cl-bancochile:payment-notifications"]));
 }
 function entity_labels(entity) {
 	return entity.labels;
@@ -1905,7 +1905,7 @@ function get_subject(message) {
 	return message.getSubject();
 }
 function get_body(message) {
-	return message.getPlainBody();
+	return message.getBody();
 }
 function get_from(message) {
 	return message.getFrom();
@@ -1950,10 +1950,11 @@ var Label = class extends CustomType {
 	}
 };
 function for_query(label) {
+	let prefix = "trolebus";
 	let _block;
 	_block = lowercase(replace(label, " ", "+"));
 	let formatted = _block;
-	return new Label(label, formatted, "biyete/" + formatted, "biyete-" + formatted);
+	return new Label(label, formatted, prefix + "/" + formatted, prefix + "/" + formatted);
 }
 //#endregion
 //#region build/dev/javascript/script/query.mjs
@@ -2067,19 +2068,22 @@ function format_message(message, _) {
 function search(builder, start, max) {
 	let queries = builder.queries;
 	return flat_map(queries, (query_str) => {
+		console_log("Searching for " + query_str);
 		let $ = search$1(query_str, start, max);
 		if ($ instanceof Ok) {
 			let threads = $[0];
 			console_log(append("Found ", to_string$1(length(threads)) + " threads"));
+			let all_labels = flat_map(threads, (thread) => {
+				return map(get_labels(thread), (l) => {
+					console_log("label: " + get_label_name(l));
+					return new FormattedLabel(get_label_name(l), l);
+				});
+			});
 			return toList([new SearchResult(threads, flat_map(threads, (thread) => {
 				return map(get_messages(thread), (msg) => {
 					return format_message(msg, builder);
 				});
-			}), flat_map(threads, (thread) => {
-				return map(get_labels(thread), (l) => {
-					return new FormattedLabel(get_label_name(l), l);
-				});
-			}), query_str)]);
+			}), all_labels, query_str)]);
 		} else {
 			console_log("Search error");
 			return List$Empty$const;
