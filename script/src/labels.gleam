@@ -1,11 +1,5 @@
 import gleam/string
 
-pub const donation = "deposit:cl-bancoestado:donation-notifications"
-
-pub const transfer = "deposit:cl-bancoestado:transfer-notifications"
-
-pub const purchase = "expense:cl-bancoestado:purchase-notifications"
-
 pub type Label {
   Label(
     raw: String,
