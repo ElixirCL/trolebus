@@ -1,0 +1,233 @@
+++++
+  <h1 align="center">🚌 Trolebus</h1>
+  <p align="center">
+    <em>Track your personal and business banking via Google Apps Script</em>
+  </p>
+++++
+
+A _Google Apps Script_ (written in https://gleam.run[Gleam] and compiled to JavaScript) that parses _Gmail_ messages from _Chilean banks_, extracts transaction data from HTML email bodies, and saves the results to a _Google Spreadsheet_ or an _HTTP endpoint_.
+
+## 🚀 Environment setup
+
+### Requirements
+
+- https://script.google.com/home[Google Apps Script].
+- https://gmail.com[Gmail].
+- https://docs.google.com/spreadsheets[Google Spreadsheets].
+
+### Quick Installation
+
+#### Step 1 - Configure Gmail
+
+. Create _Gmail_ https://support.google.com/mail/answer/6579?hl=en[labels] for each _bank entity_ you want to track.
+. Create _Gmail_ https://support.google.com/mail/answer/6579?hl=en[filters] that automatically assign those labels to incoming bank notification emails.
+. Ensure that you have some unread emails with the assigned _labels_.
+
+Each _parser_ has a designated _label_ that you must configure first
+in your _Gmail_ account.
+This is the way to determine which _parser_ will be used to extract the data.
+
+It's recommended to use a parent label named `trolebus` to organize your emails and labels related to _Trolebus_. *Labels must follow specific format in order to work*.
+
+See each _parser's_ label constants to know how to name your labels.
+
+[cols="1,1,1"]
+|===
+| Bank | Label | Transaction Type
+
+| Banco Chile
+| `expense:cl-bancochile:payment-notifications`
+| Expense
+|===
+
+##### Pro Tip
+
+If you want to create filters more easily you can use the plus sign `+` to create a unique email address for each entity.
+
+For example if you got a _Netflix_ account, you can use `example+netflix@gmail.com` as your account email address. Its the same as writing `example@gmail.com`. _Gmail_ omits everything after the `+`. For _Netflix_ it will be a valid and unique email address. For you, it means that now you can filter all emails that went to `example+netflix@gmail.com` — they all will be from _Netflix_.
+
+#### Step 2 - Create Spreadsheet
+
+. Create a new _Google Spreadsheet_ or clone an https://docs.google.com/spreadsheets/d/1y8osuw4cMi1n2hjEumeYlanCScvObllrt4f-iargRSA/edit?usp=sharing[existing one].
+. If new, add the following column headers in the first row:
+
+[cols="1,1"]
+|===
+| Column | Description
+
+| A | Message ID
+| B | From
+| C | Amount
+| D | Currency Code
+| E | Context
+| F | Account
+| G | Date
+| H | Time
+| I | Transaction Type
+| J | Label
+| K | Entity
+| L | Comment
+| M | Created At
+| N | Message Date
+| O | Meta (JSON)
+| P | Timestamp
+|===
+
+. Copy the spreadsheet URL.
+
+#### Step 3 - Configure Google Apps Script
+
+. Create a new project in https://script.google.com/home/my[Google Apps Script].
+. Upload the bundled code from link:script/dist/script.gs[script/dist/script.gs].
+. Enable https://developers.google.com/apps-script/guides/services/advanced#enabling_advanced_services[Advanced Services]: _Gmail_ and _Spreadsheets_.
+. Set the following https://developers.google.com/apps-script/reference/properties[Script Properties] via Project Settings:
+
+[cols="1,1,1"]
+|===
+| Property | Required | Description
+
+| `SPREADSHEET_URL`
+| Yes
+| The full URL of your Google Spreadsheet.
+
+| `HTTP_ENDPOINT`
+| No
+| URL of an HTTP endpoint to send parsed transaction data (JSON).
+|===
+
+. Save and run (you will need to authorize permissions first).
+. Configure a https://developers.google.com/apps-script/guides/triggers/installable[Time-driven trigger] to execute the script periodically.
+
+## 👩‍💻 Project explanation
+
+This project was inspired by https://github.com/arecker/bennedetto[Bennedetto] and https://github.com/NinjasCL/biyete[Biyete], and the lack of proper apps and technologies in Chilean banking systems. Also to automate financial tracking and help people organize their finances better.
+
+Following https://bartwronski.com/2016/06/26/technical-weight/[Bart Wronski's advice], we look for simpler solutions and try to achieve the goals with the least technical weight. Normally a solution would be a huge app with lots of endpoints, https://en.wikipedia.org/wiki/Extract,_transform,_load[ETLs] and so on.
+
+We tried to minimize using the available tools:
+
+- Banks normally do not have open endpoints to fetch data. But they send emails every time you purchase something or when you receive a deposit. These emails could be parsed with simple regex and sent to another place. Also other entities ("Netflix", "Spotify", etc) send a billing email that could also be parsed.
+
+- _Gmail_ has _Google Apps Scripts_ that let you read, program and control emails and interact with different services.
+
+- _Google Spreadsheets_ is a wonderful place to store data and create custom dashboards. Also has _Google Apps Scripts_.
+
+- Finances need to be secure and transparent. So using _Gmail_ and _Spreadsheets_ we can have an easy to use, easy to configure, low cost and secure environment to execute this script and let you have total control over your personal data (No hidden nasties).
+
+### How does it work?
+
+The script is written in https://gleam.run[Gleam] and compiled to JavaScript. The build process produces a single bundled file at `dist/script.gs` that can be deployed directly into _Google Apps Script_.
+
+The execution flow is:
+
+1. The script fetches all unread emails within specific _Gmail labels_ using individual queries per entity.
+2. Each email is routed to the correct _parser_ based on its entity ID (e.g. `cl.bancochile` → `banco_chile` parser).
+3. The parser extracts transaction data from the HTML email body (amount, date, account, etc).
+4. For every successfully parsed email, _actions_ are triggered:
+   - **Spreadsheet Action**: Appends a row with the transaction data to your _Google Spreadsheet_.
+   - **HTTP Action**: Prepares a JSON payload and sends it to your configured _HTTP endpoint_ (if set).
+5. The email is marked as read.
+
+Normally the script processes _1 thread_ per execution (configurable in `config.gleam`). _Google Apps Scripts_ max execution time is 6 minutes.
+
+### Architecture
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│   Gmail     │────▶│  Trolebus    │────▶│  Spreadsheet│
+│  (Labels)   │     │  (Parser)    │     │  (Actions)  │
+└─────────────┘     └──────┬───────┘     └─────────────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │  HTTP Endpoint│
+                    │  (Optional)   │
+                    └──────────────┘
+```
+
+### Supported Banks
+
+[cols="1,1,1"]
+|===
+| Entity ID | Name | Parser Status
+
+| `cl.bancochile`
+| Banco Chile
+| ✅ Implemented
+
+| `cl.bancoestado`
+| Banco Estado
+| 🔲 Pending
+|===
+
+### Transaction Types
+
+[cols="1,1"]
+|===
+| Type | Description
+
+| `expense`
+| Money spent (purchases, payments)
+| `deposit`
+| Money received (transfers, donations)
+| `alert`
+| Bank alerts or notifications
+| `other`
+| Unclassified transactions
+|===
+
+### Currency Support
+
+[cols="1,1,1"]
+|===
+| Code | Name | Decimals
+
+| `CLP`
+| Peso Chileno
+| 0
+|===
+
+## 🛠️ Development
+
+### Prerequisites
+
+- https://gleam.run[Gleam] >= 1.17.0
+- https://nodejs.org[Node.js] (for pnpm and Vite)
+- https://nixos.org/download.html[Nix] (optional, for reproducible dev environment via devenv)
+
+### Setup
+
+Clone the repository and enter the `script` directory:
+
+[source,sh]
+----
+git clone https://github.com/ElixirCL/trolebus/
+cd trolebus/script
+----
+
+Install dependencies:
+
+[source,sh]
+----
+pnpm install
+----
+
+### Build
+
+Build the bundled `.gs` file:
+
+[source,sh]
+----
+pnpm run build
+----
+
+This runs Vite, which bundles the Gleam-compiled JavaScript into `dist/script.gs`.
+
+### Using devenv (Optional)
+
+If you have https://devenv.sh[devenv] and https://direnv.net[direnv] installed, the development environment is automatically activated when entering the project directory:
+
+[source,sh]
+----
+cd trolebus
+----
