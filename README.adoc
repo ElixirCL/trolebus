@@ -1,11 +1,17 @@
+:ext-relative:
+:toc: macro
+:toclevels: 4
+
 ++++
   <h1 align="center">🚌 Trolebus</h1>
   <p align="center">
-    <em>Track your personal and business banking via Google Apps Script</em>
+        <img src="docs/electric-bus.png" alt="Trolebus" style="width:30%;height:auto;">
+        <br>
+        <em>Track your personal and business banking via Google Apps Script</em>
   </p>
 ++++
 
-A _Google Apps Script_ (written in https://gleam.run[Gleam] and compiled to JavaScript) that parses _Gmail_ messages from _Chilean banks_, extracts transaction data from HTML email bodies, and saves the results to a _Google Spreadsheet_ or an _HTTP endpoint_.
+A _Google Apps Script_ (written in https://gleam.run[Gleam] and compiled to JavaScript) that parses _Gmail_ messages from _banks_, extracts transaction data from HTML email bodies, and saves the results to a _Google Spreadsheet_ or an _HTTP endpoint_.
 
 ## 🚀 Environment setup
 
@@ -132,33 +138,13 @@ Normally the script processes _1 thread_ per execution (configurable in `config.
 
 ### Architecture
 
-```
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│   Gmail     │────▶│  Trolebus    │────▶│  Spreadsheet│
-│  (Labels)   │     │  (Parser)    │     │  (Actions)  │
-└─────────────┘     └──────┬───────┘     └─────────────┘
-                           │
-                           ▼
-                    ┌──────────────┐
-                    │  HTTP Endpoint│
-                    │  (Optional)   │
-                    └──────────────┘
-```
-
-### Supported Banks
-
-[cols="1,1,1"]
-|===
-| Entity ID | Name | Parser Status
-
-| `cl.bancochile`
-| Banco Chile
-| ✅ Implemented
-
-| `cl.bancoestado`
-| Banco Estado
-| 🔲 Pending
-|===
+[mermaid]
+----
+graph LR
+    A[Gmail<br>Labels] --> B[Trolebus<br>Parser]
+    B --> C[Spreadsheet<br>Actions]
+    B --> D["HTTP Endpoint<br>(Optional)"]
+----
 
 ### Transaction Types
 
@@ -187,6 +173,27 @@ Normally the script processes _1 thread_ per execution (configurable in `config.
 | 0
 |===
 
+### Supported Banks
+
+[cols="1,1,1,1,1,1"]
+|===
+| Entity ID | Name | Expense | Deposit | Alert | Other
+
+| `cl.bancochile`
+| Banco Chile
+| ✅
+| 🔲
+| 🔲
+| 🔲
+
+| `cl.bancoestado`
+| Banco Estado
+| 🔲
+| 🔲
+| 🔲
+| 🔲
+|===
+
 ## 🛠️ Development
 
 ### Prerequisites
@@ -197,12 +204,12 @@ Normally the script processes _1 thread_ per execution (configurable in `config.
 
 ### Setup
 
-Clone the repository and enter the `script` directory:
+Clone the repository and enter the `src` directory:
 
 [source,sh]
 ----
 git clone https://github.com/ElixirCL/trolebus/
-cd trolebus/script
+cd trolebus/src
 ----
 
 Install dependencies:
@@ -231,3 +238,19 @@ If you have https://devenv.sh[devenv] and https://direnv.net[direnv] installed, 
 ----
 cd trolebus
 ----
+
+== 🤩 Credits
+
+++++
+<p>
+  Icon made by <a href="https://www.flaticon.com/authors/flat-icons" title="Flat Icons">Flat Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+</p>
+
+<p>
+  Made with <i class="fa fa-heart">&#9829;</i> by
+  <a href="https://ninjas.cl">
+    Ninjas.cl
+  </a>
+  and <a href="https://elixircl.github.io">Elixir Chile</a> Contributors
+</p>
+++++

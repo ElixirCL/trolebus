@@ -1,0 +1,12 @@
+version: "3.17"
+
+tasks:
+  install:
+    desc: Install dependencies with pnpm
+    cmds:
+      - pnpm install
+
+  build:
+    desc: Build the bundled .gs file
+    cmds:
+      - pnpm run build

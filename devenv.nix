@@ -10,6 +10,8 @@ in
     beamMinimal27Packages.rebar3
 
     inotify-tools
+    asciidoctor
+    go-task
   ];
 
   languages.javascript.enable = true;

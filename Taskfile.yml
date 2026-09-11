@@ -1,0 +1,22 @@
+version: "3.17"
+
+tasks:
+  git.commit:
+    aliases:
+      - c
+      - gc
+    desc: Commit staged changes using the message in .commit-message
+    cmds:
+      - test -f .commit-message && git commit -F .commit-message
+      - rm -rf .commit-message
+
+  docs:
+    desc: Convert README.adoc to docs/index.html using asciidoctor
+    cmds:
+      - asciidoctor README.adoc -o docs/index.html
+
+  shell:
+    desc: Enter devenv shell
+    interactive: true
+    cmds:
+      - devenv shell
