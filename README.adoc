@@ -13,6 +13,8 @@
 
 A _Google Apps Script_ (written in https://gleam.run[Gleam] and compiled to JavaScript) that parses _Gmail_ messages from _banks_, extracts transaction data from HTML email bodies, and saves the results to a _Google Spreadsheet_ or an _HTTP endpoint_.
 
+toc::[]
+
 ## 🚀 Environment setup
 
 ### Requirements
