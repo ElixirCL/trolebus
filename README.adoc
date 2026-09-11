@@ -138,7 +138,7 @@ Normally the script processes _1 thread_ per execution (configurable in `config.
 
 ### Architecture
 
-[mermaid]
+[source, mermaid]
 ----
 graph LR
     A[Gmail<br>Labels] --> B[Trolebus<br>Parser]
