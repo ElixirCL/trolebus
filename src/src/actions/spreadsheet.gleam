@@ -1,10 +1,10 @@
-import gleam/io
-import gleam/int
+import ffi/date
 import ffi/properties
 import ffi/spreadsheet
-import ffi/date
-import parser.{type ParseResult}
 import formatters
+import gleam/int
+import gleam/io
+import parser.{type ParseResult}
 import types
 
 pub type ActionError {
@@ -36,17 +36,19 @@ pub fn run(
         Ok(file) -> {
           let sheet = spreadsheet.get_active_sheet(file)
 
-          let date_str = formatters.format_date(
-            formatters.timestamp_to_string(parse_result.date.timestamp),
-            "YYYY-MM-DDTHH:mm:ssZ",
-            "YYYY-MM-DD",
-          )
+          let date_str =
+            formatters.format_date(
+              formatters.timestamp_to_string(parse_result.date.timestamp),
+              "YYYY-MM-DDTHH:mm:ssZ",
+              "YYYY-MM-DD",
+            )
 
-          let time_str = formatters.format_date(
-            formatters.timestamp_to_string(parse_result.date.timestamp),
-            "YYYY-MM-DDTHH:mm:ssZ",
-            "HH:mm",
-          )
+          let time_str =
+            formatters.format_date(
+              formatters.timestamp_to_string(parse_result.date.timestamp),
+              "YYYY-MM-DDTHH:mm:ssZ",
+              "HH:mm",
+            )
 
           let created_at = formatters.timestamp_to_string(date.now())
 

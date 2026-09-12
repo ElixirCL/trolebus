@@ -8,10 +8,7 @@ pub type DateError {
 pub fn now() -> Int
 
 @external(javascript, "./date_ffi.mjs", "parse_date")
-pub fn parse_date(
-  date_string: String,
-  format: String,
-) -> Result(Int, DateError)
+pub fn parse_date(date_string: String, format: String) -> Result(Int, DateError)
 
 @external(javascript, "./date_ffi.mjs", "format_date")
 pub fn format_date(

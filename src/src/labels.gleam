@@ -1,12 +1,7 @@
 import gleam/string
 
 pub type Label {
-  Label(
-    raw: String,
-    formatted: String,
-    key: String,
-    query: String,
-  )
+  Label(raw: String, formatted: String, key: String, query: String)
 }
 
 pub fn for_query(label: String) -> Label {

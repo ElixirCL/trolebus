@@ -10,3 +10,18 @@ tasks:
     desc: Build the bundled .gs file
     cmds:
       - pnpm run build
+
+  test:
+    desc: Run the Gleam test suite
+    cmds:
+      - gleam test
+
+  format:
+    desc: Gleam format
+    cmds:
+      - gleam format src test
+
+  format.check:
+    desc: Check Gleam formatting
+    cmds:
+      - gleam format --check src test

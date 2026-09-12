@@ -1,16 +1,16 @@
-import gleam/io
-import gleam/int
-import gleam/list
-import entity
-import mailer.{type FormattedMessage, type SearchResult}
-import query.{type QueryBuilder, type QueryElement}
-import config.{type Config}
-import parsers/banco_chile
-import parser.{type ParseResult}
-import types
-import currency
-import actions/spreadsheet
 import actions/http
+import actions/spreadsheet
+import config.{type Config}
+import currency
+import entity
+import gleam/int
+import gleam/io
+import gleam/list
+import mailer.{type FormattedMessage, type SearchResult}
+import parser.{type ParseResult}
+import parsers/banco_chile
+import query.{type QueryBuilder, type QueryElement}
+import types
 
 pub type ParsedEmail {
   ParsedEmail(
@@ -27,9 +27,7 @@ pub fn get_emails(
   let builder = query.new(entities)
   let results = mailer.search(builder, 0, 1)
   let emails =
-    list.flat_map(results, fn(result) {
-      process_search_result(result, builder)
-    })
+    list.flat_map(results, fn(result) { process_search_result(result, builder) })
   let _ = io.println(int.to_string(list.length(emails)) <> " emails parsed")
   emails
 }
@@ -72,15 +70,19 @@ fn process_message(
   }
 }
 
-fn parse_email(message: FormattedMessage, element: QueryElement) -> ParseResult {
+fn parse_email(
+  message: FormattedMessage,
+  element: QueryElement,
+) -> ParseResult {
   case element.entity.id {
     "cl.bancochile" -> banco_chile.parse(message.body)
-    _ -> parser.empty_result(
-      entity_name: element.entity.name,
-      transaction_type: types.Expense,
-      label: element.label.raw,
-      currency: currency.clp(),
-    )
+    _ ->
+      parser.empty_result(
+        entity_name: element.entity.name,
+        transaction_type: types.Expense,
+        label: element.label.raw,
+        currency: currency.clp(),
+      )
   }
 }
 
@@ -94,13 +96,15 @@ pub fn run_actions(emails: List(ParsedEmail), _config: Config) -> Nil {
 }
 
 fn run_spreadsheet_action(email: ParsedEmail) -> Nil {
-  case spreadsheet.run(
-    email.info,
-    email.message.id,
-    email.message.from,
-    email.message.date,
-    email.element.label.raw,
-  ) {
+  case
+    spreadsheet.run(
+      email.info,
+      email.message.id,
+      email.message.from,
+      email.message.date,
+      email.element.label.raw,
+    )
+  {
     Ok(Nil) -> io.println("Spreadsheet action completed")
     Error(_) -> io.println("Spreadsheet action failed")
   }
@@ -108,12 +112,14 @@ fn run_spreadsheet_action(email: ParsedEmail) -> Nil {
 }
 
 fn run_http_action(email: ParsedEmail) -> Nil {
-  case http.run(
-    email.info,
-    email.message.id,
-    email.element.label.raw,
-    email.message.date,
-  ) {
+  case
+    http.run(
+      email.info,
+      email.message.id,
+      email.element.label.raw,
+      email.message.date,
+    )
+  {
     Ok(Nil) -> io.println("HTTP action completed")
     Error(_) -> io.println("HTTP action failed")
   }

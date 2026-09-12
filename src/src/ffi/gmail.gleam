@@ -51,6 +51,4 @@ pub fn get_label_name(label: GmailLabel) -> String
 pub fn mark_message_read(message: GmailMessage) -> Nil
 
 @external(javascript, "./gmail_ffi.mjs", "get_user_label_by_name")
-pub fn get_user_label_by_name(
-  name: String,
-) -> Result(GmailLabel, GmailError)
+pub fn get_user_label_by_name(name: String) -> Result(GmailLabel, GmailError)

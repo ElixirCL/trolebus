@@ -1,9 +1,9 @@
+import ffi/date
+import ffi/properties
+import formatters
 import gleam/io
 import gleam/json
-import ffi/properties
-import ffi/date
 import parser.{type ParseResult}
-import formatters
 
 pub type ActionError {
   HttpError(String)
@@ -31,17 +31,19 @@ pub fn run(
       Ok(Nil)
     }
     _ -> {
-      let date_str = formatters.format_date(
-        formatters.timestamp_to_string(parse_result.date.timestamp),
-        "YYYY-MM-DDTHH:mm:ssZ",
-        "YYYY-MM-DD",
-      )
+      let date_str =
+        formatters.format_date(
+          formatters.timestamp_to_string(parse_result.date.timestamp),
+          "YYYY-MM-DDTHH:mm:ssZ",
+          "YYYY-MM-DD",
+        )
 
-      let time_str = formatters.format_date(
-        formatters.timestamp_to_string(parse_result.date.timestamp),
-        "YYYY-MM-DDTHH:mm:ssZ",
-        "HH:mm",
-      )
+      let time_str =
+        formatters.format_date(
+          formatters.timestamp_to_string(parse_result.date.timestamp),
+          "YYYY-MM-DDTHH:mm:ssZ",
+          "HH:mm",
+        )
 
       let ts = date.now()
 

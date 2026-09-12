@@ -1,7 +1,7 @@
+import ffi/date
 import gleam/int
 import gleam/result
 import gleam/string
-import ffi/date
 
 pub fn numeric(value: String) -> Int {
   value
@@ -17,10 +17,7 @@ pub fn string(value: String) -> String {
 }
 
 pub type DateResult {
-  DateResult(
-    raw: String,
-    timestamp: Int,
-  )
+  DateResult(raw: String, timestamp: Int)
 }
 
 pub fn date(raw: String, format fmt: String) -> DateResult {

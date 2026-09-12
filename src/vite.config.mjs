@@ -7,7 +7,7 @@ export default defineConfig({
     "process.env.NODE_ENV": JSON.stringify("production"),
   },
   build: {
-    target: "es2019",
+    target: "es2020",
     lib: {
       entry: "entrypoint.js",
       formats: ["cjs"],
@@ -21,4 +21,3 @@ export default defineConfig({
     },
   },
 });
-

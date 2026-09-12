@@ -1,5 +1,5 @@
-import entity
 import currency
+import entity
 
 pub type Country {
   Country(

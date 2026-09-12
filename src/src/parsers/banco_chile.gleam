@@ -1,12 +1,12 @@
+import currency
+import formatters
 import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
 import mail_parser
-import parser.{type ParseResult, type DateInfo, DateInfo, Meta, empty_result}
+import parser.{type DateInfo, type ParseResult, DateInfo, Meta, empty_result}
 import types
-import currency
-import formatters
 
 pub const entity_id = "cl.bancochile"
 
@@ -15,12 +15,13 @@ pub const entity_name = "Banco Chile"
 pub const label_purchase = "expense:cl-bancochile:payment-notifications"
 
 pub fn parse(html_body: String) -> ParseResult {
-  let result = empty_result(
-    entity_name: entity_name,
-    transaction_type: types.Expense,
-    label: label_purchase,
-    currency: currency.clp(),
-  )
+  let result =
+    empty_result(
+      entity_name: entity_name,
+      transaction_type: types.Expense,
+      label: label_purchase,
+      currency: currency.clp(),
+    )
 
   let rows = mail_parser.parse_html_tables(html_body)
 
@@ -118,7 +119,11 @@ fn parse_int(s: String) -> Result(Int, Nil) {
 
 fn do_parse_int(s: String, negative: Bool) -> Result(Int, Nil) {
   case s |> int.parse {
-    Ok(n) -> Ok(case negative { True -> 0 - n False -> n })
+    Ok(n) ->
+      Ok(case negative {
+        True -> 0 - n
+        False -> n
+      })
     Error(_) -> Error(Nil)
   }
 }

@@ -1,6 +1,8 @@
 import gleam/dict
 import gleam/string
-import html_parser.{type Element, type Attribute, Attribute, Content, EndElement, StartElement}
+import html_parser.{
+  type Attribute, type Element, Attribute, Content, EndElement, StartElement,
+}
 
 pub type HtmlTable {
   HtmlTable(
@@ -41,7 +43,12 @@ fn walk_elements(
               dict.insert(sections, section, updated)
             }
           }
-          walk_elements(remaining, flat_updated, sections_updated, current_section)
+          walk_elements(
+            remaining,
+            flat_updated,
+            sections_updated,
+            current_section,
+          )
         }
         StartElement("th", attrs, _) -> {
           let colspan = get_attribute(attrs, "colspan")

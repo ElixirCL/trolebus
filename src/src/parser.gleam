@@ -1,14 +1,11 @@
+import currency
 import gleam/list
 import gleam/option
 import gleam/regexp
-import currency
 import types
 
 pub type DateInfo {
-  DateInfo(
-    raw: String,
-    timestamp: Int,
-  )
+  DateInfo(raw: String, timestamp: Int)
 }
 
 pub type Meta {
@@ -22,13 +19,7 @@ pub type Meta {
 }
 
 pub fn empty_meta() -> Meta {
-  Meta(
-    from: "",
-    to: "",
-    rut: "",
-    entity: "",
-    transaction: "",
-  )
+  Meta(from: "", to: "", rut: "", entity: "", transaction: "")
 }
 
 pub type ParseResult {

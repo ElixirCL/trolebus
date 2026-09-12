@@ -15,6 +15,14 @@ tasks:
       - test -f .commit-message && git commit -F .commit-message
       - rm -rf .commit-message
 
+  dist:
+    desc: Build the bundled script and copy it to app/main.gs
+    cmds:
+      - task: src:build
+      - rm -rf app/main.gs
+      - mkdir -p app
+      - cp src/dist/script.gs app/main.gs
+
   docs:
     desc: Convert README.adoc to docs/index.html using asciidoctor
     cmds:

@@ -1,15 +1,11 @@
+import entity.{type Entity}
 import gleam/dict
 import gleam/list
 import gleam/string
 import labels
-import entity.{type Entity}
 
 pub type QueryElement {
-  QueryElement(
-    name: Int,
-    entity: Entity,
-    label: labels.Label,
-  )
+  QueryElement(name: Int, entity: Entity, label: labels.Label)
 }
 
 pub type QueryBuilder {
@@ -22,31 +18,24 @@ pub type QueryBuilder {
 }
 
 pub fn new(entities: List(Entity)) -> QueryBuilder {
-  let initial = QueryBuilder(
-    elements: dict.new(),
-    labels: [],
-    queries: [],
-    query: "",
-  )
-  let builder = list.fold(entities, initial, fn(acc, ent) {
-    let ent_labels = entity.entity_labels(ent)
-    list.fold(ent_labels, acc, fn(acc2, lbl) {
-      let label = labels.for_query(lbl)
-      let element = QueryElement(
-        name: 0,
-        entity: ent,
-        label: label,
-      )
-      let elements =
-        acc2.elements
-        |> dict.insert(label.key, element)
-        |> dict.insert(label.raw, element)
-        |> dict.insert(label.formatted, element)
-        |> dict.insert(label.query, element)
-      let labels_list = list.append(acc2.labels, [label.query])
-      QueryBuilder(..acc2, elements: elements, labels: labels_list)
+  let initial =
+    QueryBuilder(elements: dict.new(), labels: [], queries: [], query: "")
+  let builder =
+    list.fold(entities, initial, fn(acc, ent) {
+      let ent_labels = entity.entity_labels(ent)
+      list.fold(ent_labels, acc, fn(acc2, lbl) {
+        let label = labels.for_query(lbl)
+        let element = QueryElement(name: 0, entity: ent, label: label)
+        let elements =
+          acc2.elements
+          |> dict.insert(label.key, element)
+          |> dict.insert(label.raw, element)
+          |> dict.insert(label.formatted, element)
+          |> dict.insert(label.query, element)
+        let labels_list = list.append(acc2.labels, [label.query])
+        QueryBuilder(..acc2, elements: elements, labels: labels_list)
+      })
     })
-  })
   build(builder)
 }
 
