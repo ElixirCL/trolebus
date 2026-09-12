@@ -5,16 +5,15 @@ let
 in
 {
   packages = with pkgs-unstable; [
-    gleam
-    beamMinimal27Packages.erlang
-    beamMinimal27Packages.rebar3
+      gleam
+      beamMinimal27Packages.erlang
+      beamMinimal27Packages.rebar3
 
-    inotify-tools
-    asciidoctor
-    go-task
-  ];
+      go-task
+    ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+      inotify-tools
+    ];
 
   languages.javascript.enable = true;
   languages.javascript.pnpm.enable = true;
 }
-

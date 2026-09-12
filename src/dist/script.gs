@@ -2565,27 +2565,31 @@ function parse(html_body) {
 	let rows = parse_html_tables(html_body);
 	let name = extract_name(html_body);
 	let rut = get_value(rows, "Rut");
-	let account_number = get_value(rows, "N° de Cuenta");
 	let account_type = get_value(rows, "Cuenta de Cargo");
 	let email = get_value(rows, "Mail");
 	let date_str = get_value(rows, "Fecha");
 	let account = get_value(rows, "Cuenta");
+	let _block;
+	let $ = get_value(rows, "N° de Cuenta");
+	if ($ === "") _block = account;
+	else _block = $;
+	let account_number = _block;
 	let amount_str = get_value(rows, "Monto Pagado");
 	let transaction_id = get_value(rows, "ID");
 	let amount = parse_amount(amount_str);
 	let date_info = parse_date(date_str);
-	let _block;
-	if (account === "") {
-		if (account_type === "") _block = entity_name;
-		else _block = account_type;
-	} else _block = account_type + " " + account;
-	let context = _block;
 	let _block$1;
+	if (account === "") {
+		if (account_type === "") _block$1 = entity_name;
+		else _block$1 = account_type;
+	} else _block$1 = account_type + " " + account;
+	let context = _block$1;
+	let _block$2;
 	if (email === "") {
-		if (name === "") _block$1 = name;
-		else _block$1 = name;
-	} else _block$1 = name + " <" + email + ">";
-	let comment = _block$1;
+		if (name === "") _block$2 = name;
+		else _block$2 = name;
+	} else _block$2 = name + " <" + email + ">";
+	let comment = _block$2;
 	return new ParseResult(amount, context, account_number, date_info, entity_name, entity_id, result.type_, result.label, result.currency, comment, new Meta("", name, rut, entity_name, transaction_id), amount > 0);
 }
 //#endregion
