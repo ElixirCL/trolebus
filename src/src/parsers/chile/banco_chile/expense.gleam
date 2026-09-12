@@ -12,7 +12,7 @@ pub const entity_id = "cl.bancochile"
 
 pub const entity_name = "Banco Chile"
 
-pub const label_purchase = "expense:cl-bancochile:payment-notifications"
+pub const label_purchase = "expense:cl.bancochile"
 
 pub fn parse(html_body: String) -> ParseResult {
   let result =

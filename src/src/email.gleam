@@ -8,7 +8,7 @@ import gleam/io
 import gleam/list
 import mailer.{type FormattedMessage, type SearchResult}
 import parser.{type ParseResult}
-import parsers/banco_chile
+import parsers/chile/banco_chile/expense
 import query.{type QueryBuilder, type QueryElement}
 import types
 
@@ -75,7 +75,7 @@ fn parse_email(
   element: QueryElement,
 ) -> ParseResult {
   case element.entity.id {
-    "cl.bancochile" -> banco_chile.parse(message.body)
+    "cl.bancochile" -> expense.parse(message.body)
     _ ->
       parser.empty_result(
         entity_name: element.entity.name,

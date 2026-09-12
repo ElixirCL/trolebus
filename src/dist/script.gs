@@ -1426,12 +1426,6 @@ var Entity = class extends CustomType {
 		this.labels = labels;
 	}
 };
-function banco_estado() {
-	return new Entity("cl.bancoestado", "Banco Estado", List$Empty$const);
-}
-function banco_chile() {
-	return new Entity("cl.bancochile", "Banco Chile", toList(["expense:cl-bancochile:payment-notifications"]));
-}
 function entity_labels(entity) {
 	return entity.labels;
 }
@@ -1447,13 +1441,6 @@ var Country = class extends CustomType {
 		this.timezones = timezones;
 	}
 };
-function chile() {
-	return new Country("cl", "Chile", toList([banco_estado(), banco_chile()]), toList([clp()]), toList([
-		"America/Santiago",
-		"America/Punta_Arenas",
-		"Pacific/Easter"
-	]));
-}
 //#endregion
 //#region build/dev/javascript/script/config.mjs
 var Config = class extends CustomType {
@@ -2494,10 +2481,10 @@ function get_value(rows, label) {
 	else return "";
 }
 //#endregion
-//#region build/dev/javascript/script/parsers/banco_chile.mjs
+//#region build/dev/javascript/script/parsers/chile/banco_chile/expense.mjs
 var entity_name = "Banco Chile";
 var entity_id = "cl.bancochile";
-var label_purchase = "expense:cl-bancochile:payment-notifications";
+var label_purchase = "expense:cl.bancochile";
 function parse_date(date_str) {
 	if (date_str === "") return new DateInfo("", 0);
 	else return new DateInfo(date_str, date(date_str, "DD/MM/YYYY").timestamp);
@@ -2648,10 +2635,24 @@ function run_actions(emails, _) {
 	});
 }
 //#endregion
+//#region build/dev/javascript/script/parsers/chile/banco_chile/bank.mjs
+function entity() {
+	return new Entity("cl.bancochile", "Banco Chile", toList(["expense:cl.bancochile"]));
+}
+//#endregion
+//#region build/dev/javascript/script/parsers/chile/country.mjs
+function country() {
+	return new Country("cl", "Chile", toList([entity()]), toList([clp()]), toList([
+		"America/Santiago",
+		"America/Punta_Arenas",
+		"Pacific/Easter"
+	]));
+}
+//#endregion
 //#region build/dev/javascript/script/script.mjs
 function main$1() {
 	console_log("Init");
-	let config = new$$1(toList([chile()]));
+	let config = new$$1(toList([country()]));
 	run_actions(get_emails(config, flat_map(config.countries, (c) => {
 		return c.entities;
 	})), config);
